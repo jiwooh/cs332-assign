@@ -11,6 +11,12 @@ object Main {
         print(pascal(col, row) + " ")
       println()
     }
+    println()
+    println("balance: everything should be true")
+    println(balance("(if (zero? x) max (/ 1 x))".toList))
+    println(balance("I told him (that it's not (yet) done).\n(But he wasn't listening)".toList))
+    println(!balance(":-)".toList))
+    println(!balance("())(".toList))
   }
 
   /**
