@@ -19,10 +19,10 @@ object Main {
     println(!balance("())(".toList))
     println()
     println("countChange: all true?")
-    println(countChange(4,List(1,2)) === 3)
-    println(countChange(300,List(5,10,20,50,100,200,500)) === 1022)
-    println(countChange(301,List(5,10,20,50,100,200,500)) === 0)
-    println(countChange(300,List(500,5,50,100,20,200,10)) === 1022)
+    println(countChange(4,List(1,2)) == 3)
+    println(countChange(300,List(5,10,20,50,100,200,500)) == 1022)
+    println(countChange(301,List(5,10,20,50,100,200,500)) == 0)
+    println(countChange(300,List(500,5,50,100,20,200,10)) == 1022)
   }
 
   /**
@@ -51,5 +51,9 @@ object Main {
   /**
    * Exercise 3
    */
-  def countChange(money: Int, coins: List[Int]): Int = ???
+  def countChange(money: Int, coins: List[Int]): Int = {
+    if (money < 0 || coins.isEmpty) 0
+    else if (money == 0) 1
+    else countChange(money - coins.head, coins) + countChange(money, coins.tail)
+  }
 }
