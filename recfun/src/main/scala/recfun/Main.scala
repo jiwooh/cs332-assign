@@ -12,11 +12,17 @@ object Main {
       println()
     }
     println()
-    println("balance: everything should be true")
+    println("balance: all true?")
     println(balance("(if (zero? x) max (/ 1 x))".toList))
     println(balance("I told him (that it's not (yet) done).\n(But he wasn't listening)".toList))
     println(!balance(":-)".toList))
     println(!balance("())(".toList))
+    println()
+    println("countChange: all true?")
+    println(countChange(4,List(1,2)) === 3)
+    println(countChange(300,List(5,10,20,50,100,200,500)) === 1022)
+    println(countChange(301,List(5,10,20,50,100,200,500)) === 0)
+    println(countChange(300,List(500,5,50,100,20,200,10)) === 1022)
   }
 
   /**
