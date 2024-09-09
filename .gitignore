@@ -6,3 +6,8 @@
 **/.settings/
 **/.DS_Store
 **/.idea/
+.vscode/
+**/.bsp/
+**/.scala-build/
+/.metals/
+target/
