@@ -11,3 +11,4 @@
 **/.scala-build/
 /.metals/
 target/
+out/
