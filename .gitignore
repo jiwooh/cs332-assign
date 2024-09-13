@@ -12,3 +12,4 @@
 /.metals/
 target/
 out/
+**/lib_managed/
