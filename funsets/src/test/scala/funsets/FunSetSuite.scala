@@ -1,9 +1,10 @@
 package funsets
 
 import org.scalatest.FunSuite
-
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
+
+import scala.annotation.tailrec
 
 /**
  * This class is a test suite for the methods in object FunSets. To run
@@ -74,9 +75,9 @@ class FunSetSuite extends FunSuite {
    */
 
   trait TestSets {
-    val s1 = singletonSet(1)
-    val s2 = singletonSet(2)
-    val s3 = singletonSet(3)
+    val s1: Set = singletonSet(1)
+    val s2: Set = singletonSet(2)
+    val s3: Set = singletonSet(3)
   }
 
   /**
@@ -86,7 +87,7 @@ class FunSetSuite extends FunSuite {
    * Once you finish your implementation of "singletonSet", exchange the
    * function "ignore" by "test".
    */
-  ignore("singletonSet(1) contains 1") {
+  test("singletonSet(1) contains 1") {
     
     /**
      * We create a new instance of the "TestSets" trait, this gives us access
@@ -101,12 +102,88 @@ class FunSetSuite extends FunSuite {
     }
   }
 
-  ignore("union contains all elements") {
+  test("union contains all elements") {
     new TestSets {
-      val s = union(s1, s2)
+      val s: Set = union(s1, s2)
       assert(contains(s, 1), "Union 1")
       assert(contains(s, 2), "Union 2")
       assert(!contains(s, 3), "Union 3")
+    }
+  }
+
+  test("intersect") {
+    new TestSets {
+      val s: Set = union(s1, s2) // == {1,2}
+      val t: Set = intersect(s1, s) // == {1}
+      assert(contains(t, 1), "Intersect 1")
+      assert(!contains(t, 2), "Intersect 2")
+      assert(!contains(t, 3), "Intersect 3")
+    }
+  }
+
+  test("diff") {
+    new TestSets {
+      val s: Set = union(s1, s2) // == {1,2}
+      val t: Set = diff(s, s1) // == {2}
+      assert(!contains(t, 1), "Diff 1")
+      assert(contains(t, 2), "Diff 2")
+      assert(!contains(t, 3), "Diff 3")
+    }
+  }
+
+  test("filter") {
+    new TestSets {
+      val s: Set = union(union(s1, s2), s3) // == {1,2,3}
+      val t: Set = filter(s, (x: Int) => x >= 2) // == {2,3}
+      assert(!contains(t, 1), "Filter 1")
+      assert(contains(t, 2), "Filter 2")
+      assert(contains(t, 3), "Filter 3")
+    }
+  }
+
+  test("forall") {
+    new TestSets {
+      val a1: Set = singletonSet(-100)
+      val a2: Set = singletonSet(0)
+      val a3: Set = singletonSet(100)
+      val a: Set = union(union(a1, a2), a3) // == {-100,0,100}
+      assert(forall(a, (x: Int) => x > -101), "Forall > -101")
+      assert(forall(a, (x: Int) => x < 101), "Forall < 101")
+      assert(!forall(a, (x: Int) => x > 0), "Forall > 0")
+    }
+  }
+
+  test("exists") {
+    new TestSets {
+      val a1: Set = singletonSet(-100)
+      val a2: Set = singletonSet(0)
+      val a3: Set = singletonSet(100)
+      val a: Set = union(union(a1, a2), a3) // == {-100,0,100}
+      assert(exists(a, (x: Int) => x > -101), "Exists > -101")
+      assert(exists(a, (x: Int) => x > 0), "Exists > 0")
+      assert(!exists(a, (x: Int) => x > 100), "Exists > 100")
+    }
+  }
+
+  /**
+   * Check if two sets are equal
+   */
+  def isSetEqual(s: Set, t: Set): Boolean = {
+    @tailrec
+    def iter(a: Int): Boolean = {
+      if (a > 1000) true
+      else if (contains(s, a) != contains(t, a)) false
+      else iter(a + 1)
+    }
+    iter(-1000)
+  }
+  test("map") {
+    new TestSets {
+      val s: Set = union(union(s1, s2), s3) // == {1,2,3}
+      val t: Set = (x: Int) => x == 2 || x == 4 || x == 6 // == {2,4,6}
+      assert(isSetEqual(map(s, (x: Int) => 2 * x), t), "Map")
+      printSet(map(s, (x: Int) => 2 * x))
+      printSet(t)
     }
   }
 }
