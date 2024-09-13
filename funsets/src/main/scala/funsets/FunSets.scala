@@ -70,13 +70,7 @@ object FunSets {
    * that satisfies `p`.
    */
   def exists(s: Set, p: Int => Boolean): Boolean = {
-    @tailrec
-    def iter(a: Int): Boolean = {
-      if (a > bound) false
-      else if (contains(s, a) && p(a)) true
-      else iter(a + 1)
-    }
-    iter(-bound)
+    !forall(s, (x: Int) => !p(x))
   }
 
   /**
