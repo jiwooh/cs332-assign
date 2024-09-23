@@ -124,3 +124,54 @@ for (int j=0; j < NUMBER_OF_TASKS; j++) {
 ### 11. Structured Programming
 - every function and every block within a function should have one entry and one exit
 - this implies that there should only be one return statement in a function, no break or continue statements in a loop, and never, ever, any goto statements
+
+## Chapter 4: Comments
+### 1. Comments Do Not Make Up for Bad Code
+- clear and expressive code with few comments is far superior to cluttered and complex code with lots of comments
+
+### 2. Explain Yourself in Code
+- it takes only a few seconds for your eyes to glance over the code and see the explanation
+
+### 3. Good Comments
+- include the copyright notice at the top of each source file
+- provide basic information with a comment
+- sometimes a comment goes beyond just useful information about the implementation and provides the intent behind a decision
+- translate the meaning of some obscure arguemnt or return value into something that's readable
+- warn other programmers about consequences of using a function or test
+- reasonable to leave "TODO" notes
+- amplify the importance of something that may otherwise seem inconsequential
+
+### 4. Bad Comments
+- if you decide to write a comment, then spend the time necessary to make sure it is the best comment you can write
+- some comments are not precise enough to be accurate
+- mandated, journal, noise comments are unnecessary
+- don't use a comment when you can use a function or a variable
+- use position markers only when the benefit is significant
+- closing brace comments clutter small preferred functions
+- no attributions and bylines
+- avoid commenting out code
+- do not offer systemwide information in the context of a local comment
+
+## Chapter 7: Error Handling
+### 1. Use Exceptions Rather Than Return Codes
+- return codes clutter the caller by making them check for errors immediately after each call
+
+### 2. Write Your Try-Catch-Finally Statement First
+- helps you define what the user of that code should expect, no matter what goes wrong with the code that is executed in the try block
+- try to write tests that force exceptions, and then add behavoir to your handler to satisfy your tests
+
+### 3. Use Unchecked Exceptions
+
+### 4. Provide Context with Exceptions
+- each exception that you throw should provide enough context to determine the source and location of an error
+
+### 5. Define Exception Classes in Terms of a Caller's Needs
+
+### 6. Define the Normal Flow
+- the client code doesn't have to deal with exceptional behavior when you create a class or configure an object so that it handles a special case
+
+### 7. Don't Return Null & Don't Pass Null
+- when we return null, we are essentially creating work for ourselves and foisting problems upon our callers
+- all it takes is one missing null check to send an application spinning out of control
+- returning null from methods is bad, but passing null into methods is worse
+- in most programming languages there is no good way to deal with a null that is passed by a caller
