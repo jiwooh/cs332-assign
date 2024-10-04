@@ -68,9 +68,17 @@ class HuffmanSuite extends FunSuite {
     assert(decode(frenchCode, secret) === decodedSecret)
   }
 
+  // Part 4a: Encoding using Huffman tree
   test("decode and encode a very short text should be identity") {
     new TestTrees {
       assert(decode(t1, encode(t1)("ab".toList)) === "ab".toList)
+    }
+  }
+
+  test("decode and encode a long text should be identity") {
+    new TestTrees {
+      val text: List[Char] = "abdabadaba".toList
+      assert(decode(t2, encode(t2)(text)) === text)
     }
   }
 }
