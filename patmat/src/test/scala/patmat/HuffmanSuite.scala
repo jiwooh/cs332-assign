@@ -81,4 +81,32 @@ class HuffmanSuite extends FunSuite {
       assert(decode(t2, encode(t2)(text)) === text)
     }
   }
+
+  // Part 4b: Encoding using code table
+  test("convert t2") {
+    new TestTrees {
+      val codeTable: CodeTable = convert(t2)
+      assert(codeTable === List(('a', List(0, 0)), ('b', List(0, 1)), ('d', List(1))))
+    }
+  }
+
+  test("mergeCodeTables") {
+    val codeTable1: CodeTable = List(('a', List(0, 1)), ('b', List(1, 0)))
+    val codeTable2: CodeTable = List(('c', List(1, 1)), ('d', List(0, 0)))
+    assert(mergeCodeTables(codeTable1, codeTable2) === List(('a', List(0, 1)), ('b', List(1, 0)), ('c', List(1, 1)), ('d', List(0, 0))))
+  }
+
+  test("decode and quickEncode a long text should be identity") {
+    new TestTrees {
+      val text: List[Char] = "abdabadaba".toList
+      assert(decode(t2, quickEncode(t2)(text)) === text)
+    }
+  }
+
+  test("encode and quickEncode a long text should be identity") {
+    new TestTrees {
+      val text: List[Char] = "abdabadaba".toList
+      assert(encode(t2)(text) === quickEncode(t2)(text))
+    }
+  }
 }
