@@ -2,6 +2,8 @@ package patmat
 
 import common._
 
+import scala.annotation.tailrec
+
 /**
  * Assignment 4: Huffman coding
  *
@@ -27,7 +29,7 @@ object Huffman {
   // Part 1: Basics
 
   def weight(tree: CodeTree): Int = tree match {
-    case Fork(left, right, _, w) => weight(left) + weight(right)
+    case Fork(left, right, _, _) => weight(left) + weight(right)
     case Leaf(_, w) => w
   }
 
@@ -77,7 +79,9 @@ object Huffman {
    *       println("integer is  : "+ theInt)
    *   }
    */
-  def times(chars: List[Char]): List[(Char, Int)] = ???
+  def times(chars: List[Char]): List[(Char, Int)] = {
+    chars.groupBy(identity).map{ case (ch, cnt) => (ch, cnt.length) }.toList
+  }
 
   /**
    * Returns a list of `Leaf` nodes for a given frequency table `freqs`.
@@ -86,12 +90,18 @@ object Huffman {
    * head of the list should have the smallest weight), where the weight
    * of a leaf is the frequency of the character.
    */
-  def makeOrderedLeafList(freqs: List[(Char, Int)]): List[Leaf] = ???
+  def makeOrderedLeafList(freqs: List[(Char, Int)]): List[Leaf] = {
+    def _makeOrderedLeafList(freqs: List[(Char, Int)]): List[Leaf] = {
+      if (freqs.nonEmpty) Leaf(freqs.head._1, freqs.head._2) :: _makeOrderedLeafList(freqs.tail)
+      else Nil
+    }
+    _makeOrderedLeafList(freqs.sortWith((x, y) => x._2 < y._2))
+  }
 
   /**
    * Checks whether the list `trees` contains only one single code tree.
    */
-  def singleton(trees: List[CodeTree]): Boolean = ???
+  def singleton(trees: List[CodeTree]): Boolean = trees.length == 1
 
   /**
    * The parameter `trees` of this function is a list of code trees ordered
@@ -105,7 +115,13 @@ object Huffman {
    * If `trees` is a list of less than two elements, that list should be returned
    * unchanged.
    */
-  def combine(trees: List[CodeTree]): List[CodeTree] = ???
+  def combine(trees: List[CodeTree]): List[CodeTree] = {
+    val left: CodeTree = trees.head
+    val right: CodeTree = trees.tail.head
+    val ch: List[Char] = (chars(left) ::: chars(right)).distinct
+    val w: Int = weight(left) + weight(right)
+    (Fork(left, right, ch, w) :: trees.tail.tail).sortWith((x, y) => weight(x) < weight(y))
+  }
 
   /**
    * This function will be called in the following way:
@@ -124,7 +140,11 @@ object Huffman {
    *    the example invocation. Also define the return type of the `until` function.
    *  - try to find sensible parameter names for `xxx`, `yyy` and `zzz`.
    */
-  def until(xxx: ???, yyy: ???)(zzz: ???): ??? = ???
+  @tailrec
+  def until(check: List[CodeTree] => Boolean, act: List[CodeTree] => List[CodeTree])(trees: List[CodeTree]): CodeTree = {
+    if (check(trees)) trees.head
+    else until(check, act)(act(trees))
+  }
 
   /**
    * This function creates a code tree which is optimal to encode the text `chars`.
@@ -132,7 +152,9 @@ object Huffman {
    * The parameter `chars` is an arbitrary text. This function extracts the character
    * frequencies from that text and creates a code tree based on them.
    */
-  def createCodeTree(chars: List[Char]): CodeTree = ???
+  def createCodeTree(chars: List[Char]): CodeTree = {
+    until(singleton, combine)(makeOrderedLeafList(times(chars)))
+  }
 
 
 
@@ -155,7 +177,7 @@ object Huffman {
 
   /**
    * What does the secret message say? Can you decode it?
-   * For the decoding use the `frenchCode' Huffman tree defined above.
+   * For the decoding use the 'frenchCode' Huffman tree defined above.
    */
   val secret: List[Bit] = List(0,0,1,1,1,0,1,0,1,1,1,0,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,1,1,1,1,0,1,0,1,1,0,0,0,0,1,0,1,1,1,0,0,1,0,0,1,0,0,0,1,0,0,0,1,0,1)
 
