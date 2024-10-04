@@ -32,6 +32,7 @@ object Huffman {
   }
 
   def chars(tree: CodeTree): List[Char] = tree match {
+    case Fork(left, right, ch, _) => (chars(left) ::: chars(right) ::: ch).distinct
     case Leaf(char, _) => List(char)
   }
 
