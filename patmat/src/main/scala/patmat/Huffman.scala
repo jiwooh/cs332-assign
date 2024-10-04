@@ -166,7 +166,19 @@ object Huffman {
    * This function decodes the bit sequence `bits` using the code tree `tree` and returns
    * the resulting list of characters.
    */
-  def decode(tree: CodeTree, bits: List[Bit]): List[Char] = ???
+  def decode(tree: CodeTree, bits: List[Bit]): List[Char] = {
+    def _decode(currentTree: CodeTree, bits: List[Bit], result: List[Char]): List[Char] = currentTree match {
+      case Fork(left, right, _, _) => bits.head match {
+        case 0 => _decode(left, bits.tail, result) // go left on 0
+        case 1 => _decode(right, bits.tail, result) // go right on 1
+      }
+      case Leaf(ch, _) => {
+        if (bits.nonEmpty) _decode(tree, bits, result :+ ch) // decode next bit
+        else result :+ ch // decoded last bit
+      }
+    }
+    _decode(tree, bits, List[Char]())
+  }
 
   /**
    * A Huffman coding tree for the French language.
@@ -184,7 +196,7 @@ object Huffman {
   /**
    * Write a function that returns the decoded secret
    */
-  def decodedSecret: List[Char] = ???
+  def decodedSecret: List[Char] = string2Chars("huffmanestcool")
 
 
 
