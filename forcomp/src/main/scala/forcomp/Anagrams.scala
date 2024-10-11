@@ -60,7 +60,7 @@ object Anagrams {
    *
    */
   lazy val dictionaryByOccurrences: Map[Occurrences, List[Word]] = {
-    loadDictionary.groupBy(wordOccurrences).toMap
+    loadDictionary.groupBy(wordOccurrences)
   }
 
   /** Returns all the anagrams of a given word. */
@@ -90,7 +90,19 @@ object Anagrams {
    *  Note that the order of the occurrence list subsets does not matter -- the subsets
    *  in the example above could have been displayed in some other order.
    */
-  def combinations(occurrences: Occurrences): List[Occurrences] = ???
+  def combinations(occurrences: Occurrences): List[Occurrences] = {
+    def _combine(occ: Occurrences): List[Occurrences] = {
+      if (occ.isEmpty) List(List())
+      else {
+        // subset of head
+        val sub: Occurrences = (for (i <- 0 until occ.head._2) yield (occ.head._1, i + 1)).toList
+        // prepend to subsets of tail
+        val pre: List[Occurrences] = for (x <- sub; y <- _combine(occ.tail)) yield x :: y
+        pre ++ _combine(occ.tail)
+      }
+    }
+    _combine(occurrences)
+  }
 
   /** Subtracts occurrence list `y` from occurrence list `x`.
    *
@@ -102,7 +114,17 @@ object Anagrams {
    *  Note: the resulting value is an occurrence - meaning it is sorted
    *  and has no zero-entries.
    */
-  def subtract(x: Occurrences, y: Occurrences): Occurrences = ???
+  def subtract(x: Occurrences, y: Occurrences): Occurrences = {
+    def _sub(x: Occurrences, y: Occurrences): Occurrences = {
+      if (x.isEmpty) List()
+      else {
+        val yCount: Int = y.toMap.getOrElse(x.head._1, 0)
+        val res: Occurrences = if (x.head._2 - yCount > 0) List((x.head._1, x.head._2 - yCount)) else List()
+        res ++ _sub(x.tail, y)
+      }
+    }
+    _sub(x, y)
+  }
 
   /** Returns a list of all anagram sentences of the given sentence.
    *
@@ -144,6 +166,21 @@ object Anagrams {
    *
    *  Note: There is only one anagram of an empty sentence.
    */
-  def sentenceAnagrams(sentence: Sentence): List[Sentence] = ???
+  def sentenceAnagrams(sentence: Sentence): List[Sentence] = {
+    def _anagrams(occ: Occurrences): List[Sentence] = {
+      if  (occ.isEmpty) List(List())
+      else {
+        for {
+          comb <- combinations(occ)
+          if comb.nonEmpty
+          // get words from current comb
+          words <- dictionaryByOccurrences.getOrElse(comb, List())
+          // words from the rest combs
+          rest <- _anagrams(subtract(occ, wordOccurrences(words)))
+        } yield words :: rest
+      }
+    }
+    _anagrams(sentenceOccurrences(sentence))
+  }
 
 }
